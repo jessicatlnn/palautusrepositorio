@@ -1,28 +1,24 @@
 import requests
-from player import Player
 from rich.console import Console
 from rich.table import Table
+from player import Player
 
-def main():
-    season = input("Season: ")
-    nationality = input("Nationality: ")
 
+def get_players_by_nationality(nationality):
     url = "https://studies.cs.helsinki.fi/nhlstats/2024-25/players"
-
     reader = PlayerReader(url)
     stats = PlayerStats(reader)
     players = stats.top_scorers_by_nationality(nationality)
+    return players
 
-    console = Console()
-
-    table = Table(title=f"Season {season} players from {nationality}")
-
+def create_table(table):
     table.add_column("Released", style="cyan")
     table.add_column("teams", style="magenta")
     table.add_column("goals", style="green")
     table.add_column("assists", style="green")
     table.add_column("points", style="green")
 
+def add_players_to_table(table, players):
     for player in players:
         points = player.goals + player.assists
 
@@ -33,27 +29,44 @@ def main():
             str(player.assists),
             str(points)
         )
-    
+
+def main():
+    season = input("Season: ")
+    nationality = input("Nationality: ")
+    players = get_players_by_nationality(nationality)
+
+    console = Console()
+
+    table = Table(title=f"Season {season} players from {nationality}")
+    create_table(table)
+    add_players_to_table(table, players)
+
     console.print(table)
 
 
 class PlayerReader:
+
+    # pylint: disable=too-few-public-methods
+
     def __init__(self, url):
         self.url = url
 
     def get_players(self):
-        response = requests.get(self.url).json()
+        response = requests.get(self.url, timeout=10).json()
 
         players = []
-    
+
         for player_dict in response:
             player = Player(player_dict)
             players.append(player)
-        
+
         return players
 
 
 class PlayerStats():
+
+    # pylint: disable=too-few-public-methods
+
     def __init__(self, reader):
         self.reader = reader
 
@@ -64,8 +77,9 @@ class PlayerStats():
         for player in players:
             if player.nationality == nationality:
                 nationality_players.append(player)
-        
-        sorted_players = sorted(nationality_players, key=lambda player: player.goals + player.assists, reverse=True)
+
+        sorted_players = sorted(nationality_players, key=lambda player:
+                                player.goals + player.assists, reverse=True)
 
         return sorted_players
 
