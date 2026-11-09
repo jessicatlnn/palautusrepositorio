@@ -11,6 +11,23 @@ def get_players_by_nationality(nationality):
     players = stats.top_scorers_by_nationality(nationality)
     return players
 
+
+def get_players_by_team(team):
+    url = "https://studies.cs.helsinki.fi/nhlstats/2024-25/players"
+    reader = PlayerReader(url)
+    stats = PlayerStats(reader)
+    players = stats.top_scorers_by_team(team)
+    return players
+
+
+def select_players(nationality):
+    if nationality:
+        return get_players_by_nationality(nationality), "nationality", nationality
+
+    team = input("Team: ")
+    return get_players_by_team(team), "team", team
+
+
 def create_table(table):
     table.add_column("Released", style="cyan")
     table.add_column("teams", style="magenta")
@@ -32,12 +49,12 @@ def add_players_to_table(table, players):
 
 def main():
     season = input("Season: ")
-    nationality = input("Nationality: ")
-    players = get_players_by_nationality(nationality)
+    nationality = input("Nationality (leave empty to search by team): ")
+    players, filter_type, filter_name = select_players(nationality)
 
     console = Console()
 
-    table = Table(title=f"Season {season} players from {nationality}")
+    table = Table(title=f"Season {season} players from {filter_type} {filter_name}")
     create_table(table)
     add_players_to_table(table, players)
 
@@ -82,6 +99,24 @@ class PlayerStats():
                                 player.goals + player.assists, reverse=True)
 
         return sorted_players
+
+    def top_scorers_by_team(self, team):
+        players = self.reader.get_players()
+        team_players = []
+
+        for player in players:
+            if player.team == team:
+                team_players.append(player)
+
+        sorted_players = sorted(team_players, key=lambda player:
+                                player.goals + player.assists, reverse=True)
+
+        return sorted_players
+
+    def top_goal_scorers(self, how_many):
+        players = self.reader.get_players()
+        sorted_players = sorted(players, key=lambda player: player.goals, reverse=True)
+        return sorted_players[:how_many]
 
 
 if __name__ == "__main__":
