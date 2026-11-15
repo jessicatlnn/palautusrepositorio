@@ -46,6 +46,16 @@ class UserService:
         if len(password) < 8:
             raise UserInputError("Salasanan täytyy olla vähintään 8 merkkiä pitkä.")
 
+        if password.isalpha():
+            raise UserInputError(
+                "Salasanan täytyy sisältää vähintään yksi numero tai erikoismerkki."
+            )
+
+        if password != password_confirmation:
+                    raise UserInputError(
+                        "Salasanan ja sen vahvistuksen täytyy olla samat."
+                    )
+
         # toteuta loput tarkastukset tänne ja nosta virhe virhetilanteissa
 
 
