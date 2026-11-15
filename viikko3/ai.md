@@ -1,0 +1,5 @@
+- Agentti generoi selkeässä järjestyksessä ohjetiedoston. Siinä oli mukana kaikki materiaalin mukaiset tarvittavat tiedot. Ohjetiedosto oli myös mielestäni tarpeeksi tiheä.
+- Agentti noudatti pyyntöä kirjoittaa testit ennen toteutusta.
+- En joutunut oikeastaan ohjaamaan agenttia muuten kuin kirjoittamaan jotkut askeleet erikseen.
+- Rikoin salasanan täsmäystestit ja pelkstä kirjaimista koostuvien salasanojen testit. Molemmat hajosivat.
+- En tiennyt, että copilot voi luoda hyvät ohjeet /init komennon avulla. Opin myös lisää siitä, miten voin käynnistää robot testejä copilotin kanssa.
